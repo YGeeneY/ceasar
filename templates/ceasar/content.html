@@ -1,0 +1,15 @@
+{% extends "ceasar/ceasar.html" %}
+{% load staticfiles %}
+
+{% block head%}
+    <link rel="stylesheet" type="text/css" href="{% static 'ceasar/css/ceasar.css' %}" >
+    <script src="{% static 'ceasar/js/jquery.js' %}" type="text/javascript"></script>
+    <script type="text/javascript" src="{% static 'ceasar/js/fusioncharts/fusioncharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ceasar/js/fusioncharts/fusioncharts.theme.fint.js' %}"></script>
+
+{% endblock head %}
+
+
+{% block jscript %}
+    <script src="{% static 'ceasar/js/ceasar.js' %}"></script>
+{% endblock jscript %}

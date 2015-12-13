@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+{% block head %}
+{% endblock head %}
+
+</head>
+
+    <body>
+
+    <div id="balance" >
+        <div id="leftbox">
+            <textarea name="text" id="id_text" form="ajax-form" placeholder="Enter text here"></textarea>
+        </div>
+
+        <div id="central_div">
+            <form id="ajax-form" method="get" action="">
+                <div id="rot">
+                    <span id="rot_text">ROT</span>
+                    <input id="id_offset" maxlength="500" name="offset" type="number" min="0">
+                </div>
+
+                <div id="buttons">
+                    <div id="left_button"><input id="encode-btn" class="ajax-btn" type="button" value="encode"></div>
+                    <div id="right_button"><input id="decode-btn" class="ajax-btn" type="button" value="decode"></div>
+                </div>
+            </form>
+        </div>
+
+
+        <div id="rightbox">
+            <textarea readonly id="text_output" placeholder="decoded text will be here">{{ decode }}</textarea>
+        </div>
+
+        <div id="Frequency_chart"> </div>
+
+        <div id="prewrap">
+        <pre id="guess"></pre>
+        </div>
+
+        {% block jscript %}
+        {% endblock jscript %}
+    </div>
+    </body>
+</html>
