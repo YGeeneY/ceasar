@@ -1,3 +1,5 @@
+use Python 3.4
+
 Start django project with any name
 cd to project folder
 git clone this repo
