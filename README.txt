@@ -1,5 +1,13 @@
 use Python 3.4
 
+static file are defined by *nix path with /
+like 'ceasar/js/fusioncharts/fusioncharts.js'
+if you are windows user please change it from / to \ in file 'templates/ceasar/content.html'
+
+like 'ceasar\js\fusioncharts\fusioncharts.js'
+
+
+
 Start django project with any name
 cd to project folder
 git clone this repo
