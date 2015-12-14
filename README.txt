@@ -40,12 +40,14 @@ change setting.py
             
             STATIC_URL = '/static/'
 Change urls.py 
-from ceasar import urls as ceasar_urls
+
+            from ceasar import urls as ceasar_urls
 
             urlpatterns = [
             
                 url(r'^light_it/', include(ceasar_urls)),
             ]
+            
 copy db.sqlite3 from repo to root of project folder
 run server
 visit server adress/light_it/
