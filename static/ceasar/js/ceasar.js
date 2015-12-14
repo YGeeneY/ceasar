@@ -15,6 +15,8 @@ function send_data(encode) { // AJAX request function
     },
     error: function (response, error) {
       $('#text_output').text("An error occurred");
+      console.log(response);
+      console.log(error);
     } // type an error if ajax fail
 
   }) //end of ajax
