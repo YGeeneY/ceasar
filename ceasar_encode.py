@@ -6,7 +6,7 @@ az = [chr(x) for x in range(ord('a'), ord('z') + 1)]  # creating alphabet
 az_len = len(az)
 
 
-def encrypt_letter(letter, offset):
+def encrypt_letter(letter, offset, en):
     """
     :param letter: 1 letter at time that passing through de_encrypt_text function
     :param offset: ROT
@@ -14,18 +14,11 @@ def encrypt_letter(letter, offset):
     """
     if not letter.isalpha():  # Good to not encrypt something if you dont know how. Just return as it is
         return letter
-    position = (az.index(letter.lower()) + offset) % az_len  # Using wiki formula encode letter
+    if en:
+        position = (az.index(letter.lower()) + offset) % az_len  # Using wiki formula encode letter
+    elif not en:
+        position = (az.index(letter.lower()) - offset + az_len) % az_len
     if letter.isupper():  # and return it in default case
-        return az[position].upper()
-    elif letter.islower():
-        return az[position].lower()
-
-
-def decrypt_letter(letter, offset):
-    if not letter.isalpha():
-        return letter
-    position = (az.index(letter.lower()) - offset + az_len) % az_len
-    if letter.isupper():
         return az[position].upper()
     elif letter.islower():
         return az[position].lower()
@@ -43,10 +36,7 @@ def de_encrypt_text(text, offset, en=True):  # passing each letter through cycle
         # dictionary_append(word, en)
         # un-comment if you want to grow dictionary in sqlite
         for letter in word:
-            if en:
-                value += encrypt_letter(letter, offset)
-            elif not en:
-                value += decrypt_letter(letter, offset)
+            value += encrypt_letter(letter, offset, en)
         value += ' '
     return value
 
