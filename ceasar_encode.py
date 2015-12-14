@@ -76,9 +76,9 @@ def guess_translation(text):
     """
     total_unique_words = len(set(text.split()))
     answer = choose(text)[0]
-    guess = round((answer / total_unique_words) * 100, 1)
+    guess = round((float(answer) / total_unique_words) * 100, 1)
 
-    if guess <= guess_rate:  # if text is clear more than :
+    if guess <= 20:  # if text is clear more than :
         possibilities = []
 
         for i in range(az_len):
