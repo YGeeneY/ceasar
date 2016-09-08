@@ -2,7 +2,8 @@ from string import ascii_lowercase as alphabet
 from django.db import connection as conn
 import os
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'ceasar3.settings'
+#if __name__ == "__main__": 
+#   os.environ['DJANGO_SETTINGS_MODULE'] = 'ceasar3.settings'
 
 
 class CaesarCypher:
