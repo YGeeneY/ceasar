@@ -4,44 +4,64 @@
 <head>
 {% block head %}
 {% endblock head %}
-
 </head>
 
-    <body>
+<body>
 
-    <div id="balance" >
-        <div id="story"><pre>{% block story %}{% endblock story %}</pre><hr></div>
-        <div id="leftbox">
-            <textarea name="text" id="id_text" form="ajax-form" placeholder="Enter text here"></textarea>
-        </div>
+<style>
+textarea{
+  resize: none;
+  width: 95%;
+  height: 250px;
+  margin-left: 2%;
+  margin-top: 10px
+}
+</style>
 
-        <div id="central_div">
-            <form id="ajax-form" method="get" action="">
-                <div id="rot">
-                    <span id="rot_text">ROT</span>
-                    <input id="id_offset" maxlength="500" name="offset" type="number" min="0">
+<div class="container" style="margin-top: 50px">
+    {% block story %}
+    {% endblock %}
+    <hr/>
+    <div class="row">
+        <!-- Left textbox -->
+        <div class="col-md-5">
+            <textarea name="text" id="text-to-process" placeholder="Enter text here"></textarea>
+        </div><!-- Left textbox ends -->
+
+        <!-- central area -->
+        <div class="col-md-2">
+            <div class="input-group input-group-lg" style="margin-top: 10px">
+              <span class="input-group-addon" id="sizing-addon1">ROT</span>
+              <input id="rot-input" value="1" type="number" min="1" max="26" class="form-control" aria-describedby="sizing-addon2">
+
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-6">
+                    <button id="decode-btn" class="btn">decode</button>
                 </div>
 
-                <div id="buttons">
-                    <div id="left_button"><input id="encode-btn" class="ajax-btn" type="button" value="encode"></div>
-                    <div id="right_button"><input id="decode-btn" class="ajax-btn" type="button" value="decode"></div>
+                <div class="col-md-6">
+                    <button id="encode-btn" class="btn">encode</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </div><!-- central area ends -->
 
-
-        <div id="rightbox">
-            <textarea readonly id="text_output" placeholder="decoded text will be here">{{ decode }}</textarea>
-        </div>
-
-        <div id="Frequency_chart"> </div>
-
-        <div id="prewrap">
-        <pre id="guess"></pre>
-        </div>
-
-        {% block jscript %}
-        {% endblock jscript %}
+        <!-- Right textbox -->
+        <div class="col-md-5">
+            <textarea readonly id="output" placeholder="decoded text will be here">{{ decode }}</textarea>
+        </div><!-- Right textbox ends -->
     </div>
-    </body>
+
+
+    <div class="row">
+            <div id="alert" class="alert alert-warning" role="alert" style="display: none">Message</div>
+    </div>
+
+    <div id="Frequency_chart" style="width: 900px; margin: 0 auto;"> </div>
+
+    {% block jscript %}
+    {% endblock jscript %}
+</div>
+
+</body>
 </html>

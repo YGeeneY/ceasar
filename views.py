@@ -1,28 +1,54 @@
-from django.shortcuts import render
+from collections import Iterable
 from django.http import JsonResponse
-
-from .ceasar_encode import *
-from .guess import *
+from .ceasar_encode import caesar
 
 
-def OnlyOne(request):
-    if request.is_ajax():  # handling ajax
-        text = request.GET.get('text')
-        offset = int(request.GET.get('offset'))
-        encode = (request.GET.get('encode'))
-        frequency = count_frequency(text)
-        # defining the values
-        if encode == 'encode':
-            encode = 1
-        elif encode == 'decode':
-            encode = 0
-        elif encode == 'just_frequency':
-            guess = guess_translation(text)
-            return JsonResponse({"success": True,
-                                 "frequency": frequency,
-                                 "guess": guess['guess_text']})
+__all__ = [
+    'api_encode_handler',
+    'api_decode_handler',
+    'api_frequency_handler',
+    'api_guess_handler',
+]
 
-        decoded = de_encrypt_text(text, offset, encode)
-        return JsonResponse({"success": True, "text": decoded, "frequency": frequency})
-    else:  # if ajax fail same form is rendering
-        return render(request, 'ceasar/content.html')
+
+def encode_helper(request):
+    text = request.GET.get('text') or ''
+    offset = request.GET.get('offset')
+    if offset and offset.isdigit():
+        offset = int(offset)
+    else:
+        offset = 0
+    return text, offset
+
+
+def api_encode_handler(request):
+    text, offset = encode_helper(request)
+    result = caesar(text, offset, encrypt=True)
+    return JsonResponse({'success': True, 'result': result, 'offset': offset})
+
+
+def api_decode_handler(request):
+    text, offset = encode_helper(request)
+    result = caesar(text, offset, encrypt=False)
+    return JsonResponse({'success': True, 'result': result, 'offset': offset})
+
+
+def api_frequency_handler(request):
+    text = request.GET.get('text') or ''
+    unique_chars = {char for char in text if char.isalpha()}
+    frequency = [{'label': char, 'value': round(text.count(char) / len(text) * 100, 2)} for char in unique_chars]
+    return JsonResponse({'success': True, 'frequency': frequency})
+
+
+def api_guess_handler(request):
+    text = request.GET.get('text') or ''
+    best_key, guess_rate, guess_text = caesar.guess_encode(text)
+    if best_key == 0:
+        return JsonResponse({'success': True,
+                             'is_encrypted': False})
+
+    return JsonResponse({'success': True,
+                         'is_encrypted': True,
+                         'best_key': best_key,
+                         'guess_rate': round(guess_rate, 2) * 100,
+                         'guess_text': guess_text})

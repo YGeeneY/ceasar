@@ -2,18 +2,18 @@
 {% load staticfiles %}
 
 {% block head%}
-    <link rel="stylesheet" type="text/css" href="{% static 'ceasar/css/ceasar.css' %}" >
-    <script src="{% static 'ceasar/js/jquery.js' %}" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="{% static 'ceasar/js/fusioncharts/fusioncharts.js' %}"></script>
     <script type="text/javascript" src="{% static 'ceasar/js/fusioncharts/fusioncharts.theme.fint.js' %}"></script>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 {% endblock head %}
 
 {% block story %}
 A Caesar cipher is one of the simplest (and easiest cracked) encryption methods. It is a Substitution Cipher that involves replacing each letter 
 of the secret message with a different letter of the alphabet which is a fixed number of positions further in the alphabet.
 {% endblock story %}
-
 
 {% block jscript %}
     <script src="{% static 'ceasar/js/ceasar.js' %}"></script>

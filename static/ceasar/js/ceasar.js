@@ -1,80 +1,99 @@
-function send_data(encode) { // AJAX request function
-  var formData = $('#ajax-form').serialize(); // data to be send
-  $.ajax({
-    type: 'GET',
-    dataType: 'json',
-    url: '',
-    data: formData + '&encode=' + encode,
-    success: function (data) {
+(function(){
+  var $leftBox = $('#text-to-process'),
+      $rightBox = $('#output'),
+      $rotBox = $('#rot-input'),
+      $encodeBtn = $('#encode-btn'),
+      $decodeBtn = $('#decode-btn');
 
-      $('#text_output').text(data.text); //output the translation if exist
-      build_chart(data.frequency); // build chart frequency of de/encoded text
+  // dimmer presentation
 
-      $("#guess").text(data.guess);// try to guess if text encoded
-      $("#prewrap").fadeIn(2000);
-    },
-    error: function (response, error) {
-      $('#text_output').text("An error occurred");
-      console.log(response);
-      console.log(error);
-    } // type an error if ajax fail
+  function showAlert(msg){
+    var $alertBox = $('#alert');
+    $alertBox.html(msg).
+    show().
+    delay(2000).
+    fadeOut('slow')
+  }
 
-  }) //end of ajax
-}; //end of function
+  function buildChart(data, guess){ // build chart
+    var chart = new FusionCharts( "column2d",
+                     "MyChart", "700", "180", "0"),
+        chartData = {
+          "chart": {"caption": guess,
+                    "xAxisName": "Letter",
+                    "yAxisName": "percentage",
+                    "numberPrefix": "%",
+                    "theme": "fint"},
+          "data": data
+        };
+    chart.setJSONData(chartData);
+    chart.render("Frequency_chart");
+  }
 
-function build_chart(data){ // build chart
-  var myChart = new FusionCharts( "column2d",
-                   "MyChart", "700", "180", "0" );
-  myChart.setJSONData(data)
-  myChart.render("Frequency_chart");
-};
+  function isValidEnglishAndPunctuation(text){
+      var re = new RegExp('^[A-Za \t-z0-9!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+$');
+      return re.test(text)
+  }
 
-function offset_valid() { // offset field Validation
-  re_offset = /^[0-9]+$/;
-  offset = $('#id_offset').val();
-  if (re_offset.test(offset) && offset >= 0 && offset != '') {
-    $('#id_offset').removeClass("error");
-    return true;
-  }//end if
-  else {
-    $('#errorfield').addClass("error"); // message if invalid
-    return false;
-  }//end of else
+  function isValidRot(digit){
+    var re = new RegExp('^([0-9]|1[0-9]|2[0-6])$');
+    return re.test(digit)
+  }
 
-}
-//end of offset validation
+  function caesarEncodeApi(encode){
+    var url = encode ? 'encode' : 'decode',
+        $rotVal = $rotBox.val(),
+        leftBoxVal = $leftBox.val();
 
-function text_valid() { // text field Validation
-  re_text = /^[\w\s,.\-!?;><:$@)(\[\]\"\']+$/; //"\w\s,.\-!?;><':
-  text = $('#id_text').val();
-  if (re_text.test(text)) {
-    $('#id_text').removeClass("error");
-    return true;
-  }//end if
-   else {
-    $('#id_text').addClass("error"); // message if invalid
-    $('#guess').text("");
-    return false;
-  }//end of else
+    if ( isValidEnglishAndPunctuation( leftBoxVal) ){
+      if ( isValidRot($rotVal) ){
+        $.get( 'api/' + url, { text: leftBoxVal, offset: $rotVal }, function( response ){
+          $rightBox.val(response.result)
+        });
+      } else { showAlert('Invalid rot value'); }
+    } else { showAlert('Only english and punctuation') }
+  }
 
-}//end of text validation
+  $leftBox.on('blur', function() {
+    if (isValidEnglishAndPunctuation($thisVal)) {
+      var $thisVal = $(this).val(),
+          frequency = $.get('api/frequency', {text: $thisVal}),
+          guess     = $.get('api/guess', {text: $thisVal});
 
-$('.ajax-btn').click(function (event) { // submitting ajax if form is valid
-  event.preventDefault();
-  if (text_valid() && offset_valid()) { // check for both fields validation
-    var enDe = $(this).val(); //choosing what to do based on buttons value
-    send_data(enDe);
-  }//end if
-   else {
-  }//end else
+      $.when(frequency, guess).done(function (responce1, responce2) {
+        var frequencyResponse = responce1[1] == "success" ? responce1[0] : undefined,
+            guessResponse = responce2[1] == "success" ? responce2[0] : undefined;
 
+        if (frequencyResponse && guessResponse){
+          var data = frequencyResponse.frequency,
+              chartHeader;
+          if ( !guessResponse.is_encrypted ) {
+              chartHeader = 'Looks like text is not encrypted. Choose ROT value and click encode';
+            } else {
+              chartHeader = 'Looks like text is encrypted. With key ' + guessResponse.best_key +
+                            ' for ' + guessResponse.guess_rate + '% we can guess that a beginning of ' +
+                            'decrypted text is ' + guessResponse.guess_text.substring(0, 20) + '...';
+            }
+          buildChart(data, chartHeader);
+        }
+      });
+    } else {
+      showAlert('Only english and punctuation')
+    }
+  });
 
-})
-$('#id_offset').blur(offset_valid); // dynamic validation
+  $rotBox.on('blur', function () {
+    if ( !isValidRot($rotBox.val()) ){
+      showAlert('Invalid rot value');
+    }
+  });
 
-$('#id_text').blur(function(){ // get frquency
-if (text_valid()) {
-send_data("just_frequency&offset=1")
-}
-text_valid; //dynamic validation
-});
+  $encodeBtn.on('click', function () {
+    caesarEncodeApi(true)
+  });
+
+  $decodeBtn.on('click', function () {
+    caesarEncodeApi(false)
+  })
+
+})();
